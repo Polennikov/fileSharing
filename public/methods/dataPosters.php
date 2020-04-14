@@ -11,7 +11,7 @@ if($_SESSION['countPost']==NULL||$_SESSION['countPost']>=$countRowPosters) {
     $_SESSION['countPost']=$countRowPosters;
 }
 if($_SESSION['countPost']<=10) {
-$massPoster=$object->readPosters($countRowPosters,1);
+$massPoster=$object->readPosters($countRowPosters,0);
 } else{
     $massPoster=$object->readPosters($countRowPosters,$_SESSION['countPost']-10);
 }
