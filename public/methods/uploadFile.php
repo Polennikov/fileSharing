@@ -15,10 +15,6 @@ $allow = array(
     'zip', 'doc', 'docx', 'xls', 'xlsx', 'pdf', 'jpg', 'png'
 );
 
-// Запрещенные расширения файлов.
-$deny = array(
-);
-
 // Директория куда будут загружаться файлы.
 $path = '..//uploads/';
 
@@ -44,28 +40,6 @@ if (isset($_FILES[$input_name])) {
     }
 
     foreach ($files as $file) {
-
-        $error = $success = '';
-
-// Проверим на ошибки загрузки.
-        if (!empty($file['error']) || empty($file['tmp_name'])) {
-            switch (@$file['error']) {
-                case 1:
-                case 2: $error = 'Превышен размер загружаемого файла.'; break;
-                case 3: $error = 'Файл был получен только частично.'; break;
-                case 4: $error = 'Файл не был загружен.'; break;
-                case 6: $error = 'Файл не загружен - отсутствует временная директория.'; break;
-                case 7: $error = 'Не удалось записать файл на диск.'; break;
-                case 8: $error = 'PHP-расширение остановило загрузку файла.'; break;
-                case 9: $error = 'Файл не был загружен - директория не существует.'; break;
-                case 10: $error = 'Превышен максимально допустимый размер файла.'; break;
-                case 11: $error = 'Данный тип файла запрещен.'; break;
-                case 12: $error = 'Ошибка при копировании файла.'; break;
-                default: $error = 'Файл не был загружен - неизвестная ошибка.'; break;
-            }
-        } elseif ($file['tmp_name'] == 'none' || !is_uploaded_file($file['tmp_name'])) {
-            $error = 'Не удалось загрузить файл.';
-        } else {
 // Оставляем в имени файла только буквы, цифры и некоторые символы.
             $pattern = "[^a-zа-яё0-9,~!@#%^-_\$\?\(\)\{\}\[\]\.]";
             $name = mb_eregi_replace($pattern, '-', $file['name']);
@@ -92,13 +66,10 @@ if (isset($_FILES[$input_name])) {
             $name = strtr($name, $converter);
             $parts = pathinfo($name);
 
-            if (empty($name) || empty($parts['extension'])) {
-                $error = 'Недопустимое тип файла';
+         if (empty($name) || empty($parts['extension'])) {
+
             } elseif (!empty($allow) && !in_array(strtolower($parts['extension']), $allow)) {
                 $_SESSION['warTypeFile']=1;
-                $error = 'Недопустимый тип файла';
-            } elseif (!empty($deny) && in_array(strtolower($parts['extension']), $deny)) {
-                $error = 'Недопустимый тип файла';
             } else {
 // Чтобы не затереть файл с таким же названием, добавим префикс.
                 $i = 0;
@@ -111,22 +82,14 @@ if (isset($_FILES[$input_name])) {
 // Перемещаем файл в директорию.
                 if (move_uploaded_file($file['tmp_name'], $path . $name)) {
 // Далее можно сохранить название файла в БД и т.п.
-                    $success = 'Файл «' . $name . '» успешно загружен.';
+                    array_push($fileMass,$name);
                 } else {
-                    $error = 'Не удалось загрузить файл.';
+                    $_SESSION['warTypeFile']=1;
                 }
-                // $_SESSION['warTypeFile']=0;
-                array_push($fileMass,$name);
             }
-
-        }
-
     }
     $_SESSION['file']=$fileMass;
 }
-
-a:
-
 ?>
 <?php
 ob_end_flush(); // Flush the output from the buffer
