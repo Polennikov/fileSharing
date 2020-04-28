@@ -1,94 +1,49 @@
 <?php
-session_start();
-$massPoster=array();
-$massFilePoster=array();
-require 'connect_Db.php';
-require '../lib/class/class_Posters.php';
-$object = new Posters();
-$object->setDbconn($dbconn);
-$countRowPosters=$object->countPosters();
-if($_SESSION['countPost']==NULL||$_SESSION['countPost']>=$countRowPosters) {
-    $_SESSION['countPost']=$countRowPosters;
-}
-if($_SESSION['countPost']<=10) {
-$massPoster=$object->readPosters($countRowPosters,0);
-} else{
-    $massPoster=$object->readPosters($countRowPosters,$_SESSION['countPost']-10);
-}
-$massFilePoster=$object->readFilePosters();
-require '../lib/class/class_Users.php';
-$objectUsers = new Users;
-$objectUsers->setDbconn($dbconn);
-echo '
+require 'dataPostersMethod.php';
+?>
 <section>
     <div class="ContentDataSection">
-        <div class="DataSection">';
-            foreach ($massPoster as $post)
-            {
-            echo '
-             <div class="ContentDataBlock">
-                <div class="DataBlock">';
-                if($_SESSION['role']==TRUE){
-                    echo "<div class='titleContent'>
-                    <h2> <a class='linkPost' href='../public/updatePostAdmin.php?title=$post[0]&coments=$post[1]&id_posters=$post[2]&id_users=$post[3]&date_posters=$post[4]'>";
-                    echo $post[0];
-                    echo '</a>
-                    </h2>
-                </div>';
-                }else{
-                    echo '
-                    <div class="titleContent">
-                        <h2>';
-                    echo $post[0];
-                    echo '
-                        </h2>
-                    </div>';
-                }
-                echo '<div class="commentsContent">';
-                echo $post[1];
-                echo '</div>';
-                echo '<br>';
-                echo '<div>Файлы:</div>';
-                foreach ($massFilePoster as $Filepost) {
-                    if($post[2]==$Filepost[2]){
-                        echo '<div >';
-                        $pathUp="../public/methods/saveFilePost.php?filename=../uploads/$Filepost[0]";
-                        echo "<a href='$pathUp'>$Filepost[0]</a>";
-                        echo '</div>';
-                    }
-                }
-                echo '<br>
-                <div class="endPostContent">
-                    <div>';
-                    echo $post[4];
-                    echo '</div>
-                    <div>';
-                    echo $objectUsers->getNameUsers(NULL,$post[3]);
-                    echo '</div>
-                   </div>
+        <div class="DataSection">
+            <? foreach ($massPoster as $post) { ?>
+                <div class="ContentDataBlock">
+                    <div class="DataBlock">
+                        <div class='titleContent'>
+                            <? if ($_SESSION['role'] == true) { ?>
+                                <h2><a class='linkPost'
+                                       href='../public/updatePostAdmin.php?id_poster=<? echo $post[2] ?>&id_users=<? echo $post[3] ?>'><? echo $post[0]; ?></a>
+                                </h2>
+                            <? } else { ?>
+                                <h2> <? echo $post[0]; ?> </h2>
+                            <? } ?>
+                        </div>
+                        <div class="commentsContent">
+                            <? echo $post[1]; ?>
+                        </div>
+                        <br>
+                        <div>Файлы:</div>
+                        <? foreach ($massFilePoster as $filePost) {
+                            if ($post[2] == $filePost[2]) {
+                                ?>
+                                <div>
+                                    <a href='../public/methods/saveFilePost.php?filename=../uploads/<? echo $filePost[0] ?>'><? echo $filePost[0] ?></a>
+                                </div>
+                                <?
+                            }
+                        } ?>
+                        <br>
+                        <div class="endPostContent">
+                            <div>
+                                <? echo $post[4]; ?>
+                            </div>
+                            <div>
+                                <? echo $objectUsers->getNameUsers(null, $post[3]); ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-             </div>';
-            }
-echo '
-        </div >
-    </div >
+            <? } ?>
+        </div>
+    </div>
 </section>
-';
-?>
 <?php
-echo '<div class="ContentDataSection">
-<div class="DataSection">
-<form method="post" action="./../public/methods/countDataPosters.php">
-<input type="submit" name="back" value="Скрыть" class="button7"></input>';
-echo "ещё ";
-if(($_SESSION['countPost']-10)<0) {
-    echo '0';
-}else{
-    echo $_SESSION['countPost']-10;
-}
-echo ' постов..&nbsp;&nbsp;&nbsp;';
-echo '<input type="submit" name="more" value="Показать ещё" class="button7"></input>
-</form> 
-</div>
-</div>';
-?>
+require '../lib/style/styleError.php';

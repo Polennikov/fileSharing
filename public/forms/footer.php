@@ -1,9 +1,9 @@
-            <footer>
-                <div class="headerContent">
-                    <div class="textHeader">
-                    </div>
-                </div>
-            </footer>
+<footer>
+    <div class="headerContent">
+        <div class="textHeader">
         </div>
-    </body>
+    </div>
+</footer>
+</div>
+</body>
 </html>

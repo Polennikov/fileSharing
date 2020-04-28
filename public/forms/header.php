@@ -17,30 +17,20 @@
             </div>
             <div class="buttonContent">
                 <div class="nameHeader">
-                    <? echo $_SESSION['name_users'];?>
+                    <? echo $_SESSION['name_users']; ?>
                 </div>
                 <div class="buttonHeader">
-                    <?php
-                    if($_SESSION['login']==NULL && $_SESSION['password']==NULL && $_GET['title']==NULL ) {
-                        echo '      <form method="post" action="methods/buttonHeader.php">
-                                        <input type="submit" name="main" id="main" value="Главная" class="button7"></input>
-                                    </form>';
-                        echo '
-                                    <form method="post" action="../public/registration.php">
-                                        <input type="submit" name="autor" id="autor" value="Регистрация" class="button7"></input>
-                                    </form>';
-                        echo '
-                                    <form method="post" action="methods/buttonHeader.php">
-                                        <input type="submit" name="in" id="in" value="Войти" class="button7"></input>
-                                    </form>';
-                    } else{
-                        echo '
-                                    <form method="post" action="methods/buttonHeader.php" >
-                                        <input type="submit" name="upPoster" id="upPoster" value="Добавить запись" class="button7"></input>
-                                        <input type="submit" name="out" id="out" value="Выйти" class="button7"></input>
-                                    </form>';
-                    }
-                    ?>
+                    <form method="post" action="methods/buttonHeader.php">
+                        <input type="submit" name="main" id="main" value="Главная" class="button7"></input>
+                        <?php
+                        if ($_SESSION['id_autorization'] == null) {
+                            echo '<input type="submit" name="reg" id="reg" value="Регистрация" class="button7"></input>
+                            <input type="submit" name="autorization" id="autorization" value="Войти" class="button7"></input>';
+                        } else {
+                            echo '<input type="submit" name="upPoster" id="upPoster" value="Добавить запись" class="button7"></input>
+                            <input type="submit" name="out" id="out" value="Выйти" class="button7"></input>';
+                        } ?>
+                    </form>
                 </div>
             </div>
         </div>
